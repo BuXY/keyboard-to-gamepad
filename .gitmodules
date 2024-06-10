@@ -1,3 +1,6 @@
+[submodule "src/ArduinoJoystickLibrary"]
+	path = src/ArduinoJoystickLibrary
+	url = https://github.com/BuXY/ArduinoJoystickLibrary
 [submodule "src/PS2Keyboard"]
 	path = src/PS2Keyboard
 	url = https://github.com/PaulStoffregen/PS2Keyboard
