@@ -1,0 +1,64 @@
+##############################################################
+
+# Added by BuXY
+
+micro_nintendo_switch_gamepad=Arduino Micro Nintendo Switch Gamepad
+
+micro_nintendo_switch_gamepad.name=Arduino Micro Nintendo Switch Gamepad
+micro_nintendo_switch_gamepad.vid.0=0x0F0D
+micro_nintendo_switch_gamepad.pid.0=0x8092
+micro_nintendo_switch_gamepad.vid.1=0x0F0D
+micro_nintendo_switch_gamepad.pid.1=0x0092
+
+micro_nintendo_switch_gamepad.vid.2=0x2A03
+micro_nintendo_switch_gamepad.pid.2=0x0037
+micro_nintendo_switch_gamepad.vid.3=0x2A03
+micro_nintendo_switch_gamepad.pid.3=0x8037
+micro_nintendo_switch_gamepad.vid.4=0x2341
+micro_nintendo_switch_gamepad.pid.4=0x0237
+micro_nintendo_switch_gamepad.vid.5=0x2341
+micro_nintendo_switch_gamepad.pid.5=0x8237
+micro_nintendo_switch_gamepad.upload_port.0.vid=0x2341
+micro_nintendo_switch_gamepad.upload_port.0.pid=0x0037
+micro_nintendo_switch_gamepad.upload_port.1.vid=0x2341
+micro_nintendo_switch_gamepad.upload_port.1.pid=0x8037
+micro_nintendo_switch_gamepad.upload_port.2.vid=0x2A03
+micro_nintendo_switch_gamepad.upload_port.2.pid=0x0037
+micro_nintendo_switch_gamepad.upload_port.3.vid=0x2A03
+micro_nintendo_switch_gamepad.upload_port.3.pid=0x8037
+micro_nintendo_switch_gamepad.upload_port.4.vid=0x2341
+micro_nintendo_switch_gamepad.upload_port.4.pid=0x0237
+micro_nintendo_switch_gamepad.upload_port.5.vid=0x2341
+micro_nintendo_switch_gamepad.upload_port.5.pid=0x8237
+micro_nintendo_switch_gamepad.upload_port.6.board=micro
+
+micro_nintendo_switch_gamepad.upload.tool=avrdude
+micro_nintendo_switch_gamepad.upload.tool.default=avrdude
+micro_nintendo_switch_gamepad.upload.tool.network=arduino_ota
+micro_nintendo_switch_gamepad.upload.protocol=avr109
+micro_nintendo_switch_gamepad.upload.maximum_size=28672
+micro_nintendo_switch_gamepad.upload.maximum_data_size=2560
+micro_nintendo_switch_gamepad.upload.speed=57600
+micro_nintendo_switch_gamepad.upload.disable_flushing=true
+micro_nintendo_switch_gamepad.upload.use_1200bps_touch=true
+micro_nintendo_switch_gamepad.upload.wait_for_upload_port=true
+
+micro_nintendo_switch_gamepad.bootloader.tool=avrdude
+micro_nintendo_switch_gamepad.bootloader.tool.default=avrdude
+micro_nintendo_switch_gamepad.bootloader.low_fuses=0xff
+micro_nintendo_switch_gamepad.bootloader.high_fuses=0xd8
+micro_nintendo_switch_gamepad.bootloader.extended_fuses=0xcb
+micro_nintendo_switch_gamepad.bootloader.file=caterina/Caterina-Micro.hex
+micro_nintendo_switch_gamepad.bootloader.unlock_bits=0x3F
+micro_nintendo_switch_gamepad.bootloader.lock_bits=0x2F
+
+micro_nintendo_switch_gamepad.build.mcu=atmega32u4
+micro_nintendo_switch_gamepad.build.f_cpu=16000000L
+micro_nintendo_switch_gamepad.build.vid=0x0F0D
+micro_nintendo_switch_gamepad.build.pid=0x0092
+micro_nintendo_switch_gamepad.build.usb_manufacturer="HORI CO.,LTD."
+micro_nintendo_switch_gamepad.build.usb_product="POKKEN CONTROLLER"
+micro_nintendo_switch_gamepad.build.board=AVR_MICRO
+micro_nintendo_switch_gamepad.build.core=arduino
+micro_nintendo_switch_gamepad.build.variant=micro
+micro_nintendo_switch_gamepad.build.extra_flags={build.usb_flags}
