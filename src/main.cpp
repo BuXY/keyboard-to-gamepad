@@ -1,14 +1,17 @@
 #define PS2_KEYBOARD
 // #define PD_MICRO
 
-#include "src/SwitchGamepad.h"
-#include "src/PS2KeyCode.h"
+#include "SwitchGamepad.h"
 #if defined PS2_KEYBOARD
-#include "src/KeyboardInput.h"
+#include "PS2KeyCode.h"
+#include "KeyboardInput.h"
 #endif
-#include "src/LedPdMicro.h"
-#include "src/LedArduinoMicro.h"
-#include "src/InternalButtonStates.h"
+#ifdef PD_MICRO
+#include "LedPdMicro.h"
+#else
+#include "LedArduinoMicro.h"
+#endif
+#include "InternalButtonStates.h"
 
 // General config
 
