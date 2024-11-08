@@ -1,23 +1,30 @@
+#define PS2_KEYBOARD
+// #define PD_MICRO
+
 #include "src/SwitchGamepad.h"
 #include "src/PS2KeyCode.h"
+#if defined PS2_KEYBOARD
 #include "src/KeyboardInput.h"
+#endif
 #include "src/LedPdMicro.h"
 #include "src/LedArduinoMicro.h"
 #include "src/InternalButtonStates.h"
 
 // General config
 
-#define PD_MICRO
-
+#if defined PS2_KEYBOARD
 const uint8_t dataPin_usbDataMinus = 1; // D1 / PD3 / TXD1 / INT3 / white
 const uint8_t irqpin_usbDataPlus = 0;   // D0 / PD2 / RXD1 / AIN1 / INT2 / green
+#endif
 const uint32_t refreshRateMillis = 10;
 const uint32_t liveLedFlashIntervalMillis = 1000;
 
 // Common variables
 
 uint32_t nextMillis = 0;
+#if defined PS2_KEYBOARD
 KeyboardInput keyboardInput;
+#endif
 SwitchGamepad gamepadOutput;
 LedController* ledController = nullptr;
 
@@ -25,6 +32,7 @@ LedController* ledController = nullptr;
 
 InternalButtonStates internalButtonStates;
 
+#if defined PS2_KEYBOARD
 KeyboardInput::KeyMapItem keyMap[] = 
 {
 	{keyboardInput.addModifier(PS2_KC_L_ARROW), &internalButtonStates.PrimaryLeft},
@@ -63,6 +71,7 @@ KeyboardInput::KeyMapItem keyMap[] =
 	{PS2_KC_F1, &internalButtonStates.SetRunOn},
 	{PS2_KC_F2, &internalButtonStates.SetRunOff},
 };
+#endif
 
 // Nintendo Switch gamepad output
 
@@ -147,9 +156,11 @@ void updateLiveLeds()
 // Arduino internal
 
 void setup() {
+#if defined PS2_KEYBOARD
 	// Initialize PS/2 keyboard input
 	keyboardInput.begin(dataPin_usbDataMinus, irqpin_usbDataPlus);
 	keyboardInput.mapKeyCodesToBools(keyMap, sizeof(keyMap) / sizeof(*keyMap));
+#endif
 
 	// Initialize Nintendo Switch gamepad output
 	const bool joyAutoSendState = false;
@@ -173,8 +184,10 @@ void loop() {
 	}
 	nextMillis = millis() + refreshRateMillis;
 
+#if defined PS2_KEYBOARD
 	// Handle PS/2 keyboard input
 	const uint8_t pressedKnownKeyCount = keyboardInput.updateInputs();
+#endif
 	internalButtonStates.updateLatches();
 
 	// Handle Nintendo Switch gamepad output
