@@ -1,8 +1,5 @@
 #pragma once
 
-// #ifndef INTERNAL_BUTTON_STATES_h
-// #define INTERNAL_BUTTON_STATES_h
-
 class InternalButtonStates
 {
 public:
@@ -52,5 +49,3 @@ public:
 	void updateLatch(bool* io_latch, bool* i_setOn, bool* i_setOff);
 	bool getRunState() const;
 };
-
-// #endif // INTERNAL_BUTTON_STATES_h

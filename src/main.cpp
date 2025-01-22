@@ -1,5 +1,6 @@
 // #define PS2_KEYBOARD
 #define MIDI_KEYBOARD
+#define BASE_OCTAVE 5
 // #define PD_MICRO
 
 #include "SwitchGamepad.h"
@@ -83,41 +84,41 @@ KeyboardInput::KeyMapItem keyMap[] =
 #elif defined MIDI_KEYBOARD
 MidiInput::NoteMapItem noteMap[] = 
 {
-	{midiInput.buildMidiNote(5, MidiInput::NoteEnum::C), &internalButtonStates.PrimaryLeft},
-	{midiInput.buildMidiNote(5, MidiInput::NoteEnum::E), &internalButtonStates.PrimaryRight},
-	{midiInput.buildMidiNote(5, MidiInput::NoteEnum::Ds), &internalButtonStates.PrimaryUp},
-	{midiInput.buildMidiNote(5, MidiInput::NoteEnum::D), &internalButtonStates.PrimaryDown},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::C), &internalButtonStates.PrimaryLeft},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::E), &internalButtonStates.PrimaryRight},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::Ds), &internalButtonStates.PrimaryUp},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::D), &internalButtonStates.PrimaryDown},
 
-	{midiInput.buildMidiNote(5, MidiInput::NoteEnum::F), &internalButtonStates.SecondaryLeft},
-	{midiInput.buildMidiNote(5, MidiInput::NoteEnum::A), &internalButtonStates.SecondaryRight},
-	{midiInput.buildMidiNote(5, MidiInput::NoteEnum::Gs), &internalButtonStates.SecondaryUp},
-	{midiInput.buildMidiNote(5, MidiInput::NoteEnum::G), &internalButtonStates.SecondaryDown},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::F), &internalButtonStates.SecondaryLeft},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::A), &internalButtonStates.SecondaryRight},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::Gs), &internalButtonStates.SecondaryUp},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::G), &internalButtonStates.SecondaryDown},
 
-	{midiInput.buildMidiNote(4, MidiInput::NoteEnum::C), &internalButtonStates.DPadLeft},
-	{midiInput.buildMidiNote(4, MidiInput::NoteEnum::E), &internalButtonStates.DPadRight},
-	{midiInput.buildMidiNote(4, MidiInput::NoteEnum::Ds), &internalButtonStates.DPadUp},
-	{midiInput.buildMidiNote(4, MidiInput::NoteEnum::D), &internalButtonStates.DPadDown},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 0, MidiInput::NoteEnum::C), &internalButtonStates.DPadLeft},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 0, MidiInput::NoteEnum::E), &internalButtonStates.DPadRight},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 0, MidiInput::NoteEnum::Ds), &internalButtonStates.DPadUp},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 0, MidiInput::NoteEnum::D), &internalButtonStates.DPadDown},
 
-	{midiInput.buildMidiNote(4, MidiInput::NoteEnum::A), &internalButtonStates.A},
-	{midiInput.buildMidiNote(4, MidiInput::NoteEnum::G), &internalButtonStates.B},
-	{midiInput.buildMidiNote(4, MidiInput::NoteEnum::As), &internalButtonStates.X},
-	{midiInput.buildMidiNote(4, MidiInput::NoteEnum::Gs), &internalButtonStates.Y},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 0, MidiInput::NoteEnum::A), &internalButtonStates.A},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 0, MidiInput::NoteEnum::G), &internalButtonStates.B},
+	// {midiInput.buildMidiNote(BASE_OCTAVE + 0, MidiInput::NoteEnum::As), &internalButtonStates.X},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 0, MidiInput::NoteEnum::Gs), &internalButtonStates.Y},
 
-	{midiInput.buildMidiNote(4, MidiInput::NoteEnum::Fs), &internalButtonStates.L},
-	{midiInput.buildMidiNote(4, MidiInput::NoteEnum::As), &internalButtonStates.R},
-	{midiInput.buildMidiNote(4, MidiInput::NoteEnum::F), &internalButtonStates.ZL},
-	// {midiInput.buildMidiNote(4, MidiInput::NoteEnum::B), &internalButtonStates.ZR},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 0, MidiInput::NoteEnum::Fs), &internalButtonStates.L},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 0, MidiInput::NoteEnum::As), &internalButtonStates.R},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 0, MidiInput::NoteEnum::F), &internalButtonStates.ZL},
+	// {midiInput.buildMidiNote(BASE_OCTAVE + 0, MidiInput::NoteEnum::B), &internalButtonStates.ZR},
 
-	{midiInput.buildMidiNote(5, MidiInput::NoteEnum::B), &internalButtonStates.Minus},
-	{midiInput.buildMidiNote(6, MidiInput::NoteEnum::C), &internalButtonStates.Plus},
-	// {midiInput.buildMidiNote(5, MidiInput::NoteEnum::Cs), &internalButtonStates.PrimaryStick},
-	// {midiInput.buildMidiNote(5, MidiInput::NoteEnum::Fs), &internalButtonStates.SecondaryStick},
-	{midiInput.buildMidiNote(4, MidiInput::NoteEnum::Cs), &internalButtonStates.Home},
-	// {midiInput.buildMidiNote(3, MidiInput::NoteEnum::B), &internalButtonStates.Capture},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::As), &internalButtonStates.Minus},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::B), &internalButtonStates.Plus},
+	// {midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::Cs), &internalButtonStates.PrimaryStick},
+	// {midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::Fs), &internalButtonStates.SecondaryStick},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 0, MidiInput::NoteEnum::Cs), &internalButtonStates.Home},
+	// {midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::As), &internalButtonStates.Capture},
 	
-	{midiInput.buildMidiNote(4, MidiInput::NoteEnum::B), &internalButtonStates.Run},
-	{midiInput.buildMidiNote(5, MidiInput::NoteEnum::Cs), &internalButtonStates.SetRunOn},
-	{midiInput.buildMidiNote(5, MidiInput::NoteEnum::Fs), &internalButtonStates.SetRunOff},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 0, MidiInput::NoteEnum::B), &internalButtonStates.Run},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::Cs), &internalButtonStates.SetRunOn},
+	{midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::Fs), &internalButtonStates.SetRunOff},
 };
 #endif
 
@@ -256,6 +257,6 @@ void loop() {
 #if defined PS2_KEYBOARD
 	ledController->setVoltageLeds((pressedKnownKeyCount + 1 % 6));
 #elif defined MIDI_KEYBOARD
-	ledController->setVoltageLeds(pressedKnownKeyCount);
+	ledController->setVoltageLeds(pressedKnownKeyCount % 6);
 #endif
 }
