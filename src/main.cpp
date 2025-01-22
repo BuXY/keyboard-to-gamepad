@@ -65,17 +65,17 @@ KeyboardInput::KeyMapItem keyMap[] =
 	{PS2_KC_W, &internalButtonStates.X},
 	{PS2_KC_Q, &internalButtonStates.Y},
 
-	{PS2_KC_CAPS, &internalButtonStates.L},
-	{PS2_KC_D, &internalButtonStates.R},
-	{PS2_KC_TAB, &internalButtonStates.ZL},
-	{PS2_KC_E, &internalButtonStates.ZR},
+	{PS2_KC_TAB, &internalButtonStates.L},
+	{PS2_KC_E, &internalButtonStates.R},
+	{PS2_KC_CAPS, &internalButtonStates.ZL},
+	{PS2_KC_D, &internalButtonStates.ZR},
 
 	{PS2_KC_KP_MINUS, &internalButtonStates.Minus},
 	{PS2_KC_KP_PLUS, &internalButtonStates.Plus},
 	{PS2_KC_R, &internalButtonStates.PrimaryStick},
 	{PS2_KC_F, &internalButtonStates.SecondaryStick},
 	{PS2_KC_ESC, &internalButtonStates.Home},
-	{PS2_KC_F12, &internalButtonStates.Capture},
+	{keyboardInput.addModifier(PS2_KC_PRTSCR), &internalButtonStates.Capture},
 	
 	{keyboardInput.addModifier(PS2_KC_CTRL), &internalButtonStates.Run},
 	{PS2_KC_F1, &internalButtonStates.SetRunOn},
