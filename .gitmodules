@@ -4,3 +4,6 @@
 [submodule "src/PS2Keyboard"]
 	path = src/PS2Keyboard
 	url = https://github.com/PaulStoffregen/PS2Keyboard
+[submodule "lib/arduino_midi_library"]
+	path = lib/arduino_midi_library
+	url = https://github.com/FortySevenEffects/arduino_midi_library

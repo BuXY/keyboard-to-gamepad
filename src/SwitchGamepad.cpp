@@ -55,7 +55,7 @@ void SwitchGamepad::setAllAxisRange(const int32_t minimum, const int32_t maximum
 	axisSlightPositiveValue = (axisMidValue + axisPositiveValue) / 2;
 }
 
-int32_t SwitchGamepad::getDigitalAxis(const bool i_minimumButton, const bool i_maximumButton, const bool i_fullRange = true) const
+int32_t SwitchGamepad::getDigitalAxis(const bool i_minimumButton, const bool i_maximumButton, const bool i_fullRange) const
 {
 	if (i_minimumButton == i_maximumButton)
 		return axisMidValue;
