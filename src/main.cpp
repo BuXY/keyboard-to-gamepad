@@ -1,6 +1,7 @@
 // #define PS2_KEYBOARD
-#define MIDI_KEYBOARD
+// #define MIDI_KEYBOARD
 #define BASE_OCTAVE 5
+#define PENCON64
 // #define PD_MICRO
 
 #include "SwitchGamepad.h"
@@ -9,6 +10,8 @@
 #include "KeyboardInput.h"
 #elif defined MIDI_KEYBOARD
 #include "MidiInput.h"
+#elif defined PENCON64
+#include "PenCon64Input.h"
 #endif
 #ifdef PD_MICRO
 #include "LedPdMicro.h"
@@ -23,6 +26,11 @@
 const uint8_t dataPin_usbDataMinus = 1; // D1 / PD3 / TXD1 / INT3 / white
 const uint8_t irqpin_usbDataPlus = 0;   // D0 / PD2 / RXD1 / AIN1 / INT2 / green
 #elif defined MIDI_KEYBOARD
+#elif defined PENCON64
+const uint8_t rxPin = 9;
+const uint8_t txPin = 8;
+const uint32_t baudRate = 2400;
+const bool useInvertedSoftwareSerial = false; // If false, then the HardwareSerial rxPin = 0, txPin = 1 is used implicitly
 #endif
 const uint32_t refreshRateMillis = 10;
 const uint32_t liveLedFlashIntervalMillis = 1000;
@@ -34,6 +42,8 @@ uint32_t nextMillis = 0;
 KeyboardInput keyboardInput;
 #elif defined MIDI_KEYBOARD
 MidiInput midiInput;
+#elif defined PENCON64
+PenCon64Input penCon64Input;
 #endif
 SwitchGamepad gamepadOutput;
 LedController* ledController = nullptr;
@@ -120,12 +130,31 @@ MidiInput::NoteMapItem noteMap[] =
 	{midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::Cs), &internalButtonStates.SetRunOn},
 	{midiInput.buildMidiNote(BASE_OCTAVE + 1, MidiInput::NoteEnum::Fs), &internalButtonStates.SetRunOff},
 };
+#elif defined PENCON64
+bool* joystickButtonMap[] = {
+	// Joystick 1: up (also lightpen button), down, left, right, fire
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	nullptr,
+	// Joystick 2: up, down, left, right, fire
+	&internalButtonStates.ZL,
+	&internalButtonStates.B,
+	&internalButtonStates.Y,
+	&internalButtonStates.A,
+	&internalButtonStates.Plus,
+};
 #endif
 
 // Nintendo Switch gamepad output
 
 void updateGamepadAnalogSticks()
 {
+#if defined PENCON64
+	gamepadOutput.setXAxis(penCon64Input.getLightPenX());
+	gamepadOutput.setYAxis(penCon64Input.getLightPenY());
+#else
 	gamepadOutput.setXAxis(
 		gamepadOutput.getDigitalAxis(
 			internalButtonStates.PrimaryLeft,
@@ -137,6 +166,7 @@ void updateGamepadAnalogSticks()
 			internalButtonStates.PrimaryUp,
 			internalButtonStates.PrimaryDown,
 			internalButtonStates.getRunState()));
+#endif
 
 	gamepadOutput.setZAxis(
 		gamepadOutput.getDigitalAxis(
@@ -188,7 +218,10 @@ void updateLiveLeds()
 	const bool liveLedState = (millis() % liveLedFlashIntervalMillis) < (liveLedFlashIntervalMillis >> 1);
 
 	ledController->setRxLed(liveLedState);
+#if defined PENCON64
+#else
 	ledController->setTxLed(internalButtonStates.getRunState());
+#endif
 
 	uint8_t currentLedIndex = (millis() / 100) % 8;
 	if (currentLedIndex == 4)
@@ -213,6 +246,9 @@ void setup() {
 	// Initialize MIDI input
 	midiInput.begin();
 	midiInput.mapMidiNotesToBools(noteMap, sizeof(noteMap) / sizeof(*noteMap));
+#elif defined PENCON64
+	penCon64Input.begin(useInvertedSoftwareSerial, baudRate, rxPin, txPin);
+	penCon64Input.mapJoystickButtons(joystickButtonMap, sizeof(joystickButtonMap) / sizeof(*joystickButtonMap));
 #endif
 
 	// Initialize Nintendo Switch gamepad output
@@ -243,6 +279,9 @@ void loop() {
 #elif defined MIDI_KEYBOARD
 	// Handle MIDI keyboard input
 	const uint8_t pressedKnownKeyCount = midiInput.updateInputs();
+#elif defined PENCON64
+	// Handle LightPen + joystick over RS232 input
+	const uint8_t pressedKnownKeyCount = penCon64Input.updateInputs();
 #endif
 	internalButtonStates.updateLatches();
 
@@ -258,5 +297,8 @@ void loop() {
 	ledController->setVoltageLeds((pressedKnownKeyCount + 1 % 6));
 #elif defined MIDI_KEYBOARD
 	ledController->setVoltageLeds(pressedKnownKeyCount % 6);
+#elif defined PENCON64
+	ledController->setVoltageLeds(pressedKnownKeyCount % 4);
+	ledController->setTxLed(pressedKnownKeyCount % 4);
 #endif
 }
