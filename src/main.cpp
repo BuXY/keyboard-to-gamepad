@@ -1,7 +1,8 @@
 // #define PS2_KEYBOARD
 // #define MIDI_KEYBOARD
 #define BASE_OCTAVE 5
-#define PENCON64
+// #define PENCON64
+#define VRCON
 // #define PD_MICRO
 
 #include "SwitchGamepad.h"
@@ -10,7 +11,7 @@
 #include "KeyboardInput.h"
 #elif defined MIDI_KEYBOARD
 #include "MidiInput.h"
-#elif defined PENCON64
+#elif defined(PENCON64) || defined(VRCON)
 #include "PenCon64Input.h"
 #endif
 #ifdef PD_MICRO
@@ -30,7 +31,12 @@ const uint8_t irqpin_usbDataPlus = 0;   // D0 / PD2 / RXD1 / AIN1 / INT2 / green
 const uint8_t rxPin = 9;
 const uint8_t txPin = 8;
 const uint32_t baudRate = 2400;
-const bool useInvertedSoftwareSerial = false; // If false, then the HardwareSerial rxPin = 0, txPin = 1 is used implicitly
+const bool useInvertedSoftwareSerial = false;
+#elif defined VRCON
+const uint8_t rxPin = 9;
+const uint8_t txPin = 8;
+const uint32_t baudRate = 9600;
+const bool useInvertedSoftwareSerial = true;
 #endif
 const uint32_t refreshRateMillis = 10;
 const uint32_t liveLedFlashIntervalMillis = 1000;
@@ -42,7 +48,7 @@ uint32_t nextMillis = 0;
 KeyboardInput keyboardInput;
 #elif defined MIDI_KEYBOARD
 MidiInput midiInput;
-#elif defined PENCON64
+#elif defined(PENCON64) || defined(VRCON)
 PenCon64Input penCon64Input;
 #endif
 SwitchGamepad gamepadOutput;
@@ -145,13 +151,28 @@ bool* joystickButtonMap[] = {
 	&internalButtonStates.A,
 	&internalButtonStates.Plus,
 };
+#elif defined VRCON
+bool* joystickButtonMap[] = {
+	// 3rd byte bit 0, 1, 2, 3, 4
+	&internalButtonStates.ZL,
+	&internalButtonStates.R,
+	nullptr,
+	nullptr,
+	nullptr,
+	// 4th byte bit 0, 1, 2, 3, 4
+	&internalButtonStates.A,
+	&internalButtonStates.B,
+	&internalButtonStates.X,
+	&internalButtonStates.Y,
+	&internalButtonStates.Plus,
+};
 #endif
 
 // Nintendo Switch gamepad output
 
 void updateGamepadAnalogSticks()
 {
-#if defined PENCON64
+#if defined(PENCON64) || defined(VRCON)
 	gamepadOutput.setXAxis(penCon64Input.getLightPenX());
 	gamepadOutput.setYAxis(penCon64Input.getLightPenY());
 #else
@@ -218,7 +239,7 @@ void updateLiveLeds()
 	const bool liveLedState = (millis() % liveLedFlashIntervalMillis) < (liveLedFlashIntervalMillis >> 1);
 
 	ledController->setRxLed(liveLedState);
-#if defined PENCON64
+#if defined(PENCON64) || defined(VRCON)
 #else
 	ledController->setTxLed(internalButtonStates.getRunState());
 #endif
@@ -246,7 +267,7 @@ void setup() {
 	// Initialize MIDI input
 	midiInput.begin();
 	midiInput.mapMidiNotesToBools(noteMap, sizeof(noteMap) / sizeof(*noteMap));
-#elif defined PENCON64
+#elif defined(PENCON64) || defined(VRCON)
 	penCon64Input.begin(useInvertedSoftwareSerial, baudRate, rxPin, txPin);
 	penCon64Input.mapJoystickButtons(joystickButtonMap, sizeof(joystickButtonMap) / sizeof(*joystickButtonMap));
 #endif
@@ -279,7 +300,7 @@ void loop() {
 #elif defined MIDI_KEYBOARD
 	// Handle MIDI keyboard input
 	const uint8_t pressedKnownKeyCount = midiInput.updateInputs();
-#elif defined PENCON64
+#elif defined(PENCON64) || defined(VRCON)
 	// Handle LightPen + joystick over RS232 input
 	const uint8_t pressedKnownKeyCount = penCon64Input.updateInputs();
 #endif
@@ -297,7 +318,7 @@ void loop() {
 	ledController->setVoltageLeds((pressedKnownKeyCount + 1 % 6));
 #elif defined MIDI_KEYBOARD
 	ledController->setVoltageLeds(pressedKnownKeyCount % 6);
-#elif defined PENCON64
+#elif defined(PENCON64) || defined(VRCON)
 	ledController->setVoltageLeds(pressedKnownKeyCount % 4);
 	ledController->setTxLed(pressedKnownKeyCount % 4);
 #endif

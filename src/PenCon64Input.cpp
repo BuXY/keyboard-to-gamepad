@@ -11,15 +11,9 @@
 
 void PenCon64Input::begin(const bool i_useInvertedInputSoftwareSerial, const uint32_t i_baudRate, const uint8_t i_rxPin, const uint8_t i_txPin)
 {
-    if (i_useInvertedInputSoftwareSerial)
-    {
-        SoftwareSerial* pointerThatWillLeak = new SoftwareSerial(i_rxPin, i_txPin, false);
-        pointerThatWillLeak->begin(i_baudRate);
-        serial = pointerThatWillLeak;
-    } else {
-        Serial1.begin(i_baudRate, SERIAL_8N1);
-        serial = &Serial1;
-    }
+    SoftwareSerial* pointerThatWillLeak = new SoftwareSerial(i_rxPin, i_txPin, i_useInvertedInputSoftwareSerial);
+    pointerThatWillLeak->begin(i_baudRate);
+    serial = pointerThatWillLeak;
 }
 
 void PenCon64Input::mapJoystickButtons(bool* i_joystickButtonMap[], const size_t i_joystickButtonMapSize)
@@ -60,14 +54,17 @@ uint8_t PenCon64Input::updateInputs()
         {
             case 0:
                 lightPenXRaw = newData;
+#ifdef PENCON64
                 newData -= 94; // Offset to center and convert to signed
                 newData = newData * 128 / 100 * 2; // Scale to rough circle, pixel value is divided by 2 in the original register
                 newData += 128; // Convert to unsigned
                 newData = max(0, min(newData, 255)); // Limit between 0..255
+#endif
                 lightPenX = newData;
                 break;
             case 1:
                 lightPenYRaw = newData;
+#ifdef PENCON64
                 if (newData < 32)
                     newData = 255; // Pre-limit the overflowing value
 
@@ -75,6 +72,7 @@ uint8_t PenCon64Input::updateInputs()
                 newData = newData * 128 / 100; // Scale to full height inside border
                 newData += 128; // Convert to unsigned
                 newData = max(0, min(newData, 255)); // Limit between 0..255
+#endif
                 lightPenY = newData;
                 break;
             case 2:
