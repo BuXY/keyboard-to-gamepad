@@ -2,7 +2,8 @@
 // #define MIDI_KEYBOARD
 #define BASE_OCTAVE 5
 // #define PENCON64
-#define VRCON
+// #define VRCON
+#define TELECON
 // #define PD_MICRO
 
 #include "SwitchGamepad.h"
@@ -13,6 +14,8 @@
 #include "MidiInput.h"
 #elif defined(PENCON64) || defined(VRCON)
 #include "PenCon64Input.h"
+#elif defined TELECON 
+#include "KeypadInput.h"
 #endif
 #ifdef PD_MICRO
 #include "LedPdMicro.h"
@@ -37,6 +40,12 @@ const uint8_t rxPin = 9;
 const uint8_t txPin = 8;
 const uint32_t baudRate = 9600;
 const bool useInvertedSoftwareSerial = true;
+#elif defined TELECON
+byte rowPins[4] = { 3, 4, 5, 8 };
+byte colPins[4] = { 7, 6, 2, 9 };
+const uint8_t pulseToneSwitchPin = A3;
+const int pulseToneValuePulseSmash = HIGH;
+const int pulseToneValueToneDpad = LOW;
 #endif
 const uint32_t refreshRateMillis = 10;
 const uint32_t liveLedFlashIntervalMillis = 1000;
@@ -50,6 +59,8 @@ KeyboardInput keyboardInput;
 MidiInput midiInput;
 #elif defined(PENCON64) || defined(VRCON)
 PenCon64Input penCon64Input;
+#elif defined TELECON
+KeypadInput keypadInput;
 #endif
 SwitchGamepad gamepadOutput;
 LedController* ledController = nullptr;
@@ -166,6 +177,51 @@ bool* joystickButtonMap[] = {
 	&internalButtonStates.Y,
 	&internalButtonStates.Plus,
 };
+#elif defined TELECON
+bool* keypadMapDpad[] = {
+	// Row 1: 1, 2, 3, Flash
+	nullptr,
+	&internalButtonStates.DPadUp,
+	nullptr,
+	&internalButtonStates.Minus,
+	// Row 2: 4, 5, 6, B
+	&internalButtonStates.DPadLeft,
+	&internalButtonStates.DPadDown,
+	&internalButtonStates.DPadRight,
+	nullptr,
+	// Row 3: 7, 8, 9, C
+	nullptr,
+	&internalButtonStates.DPadDown,
+	nullptr,
+	nullptr,
+	// Row 4: *, 0, #, Redial
+	nullptr,
+	&internalButtonStates.B,
+	&internalButtonStates.A,
+	&internalButtonStates.Plus,
+};
+bool* keypadMapSmash[] = {
+	// Row 1: 1, 2, 3, Flash
+	&internalButtonStates.SetRunOn,
+	&internalButtonStates.PrimaryUp,
+	&internalButtonStates.SetRunOff,
+	&internalButtonStates.Run,
+	// Row 2: 4, 5, 6, B
+	&internalButtonStates.PrimaryLeft,
+	&internalButtonStates.PrimaryDown,
+	&internalButtonStates.PrimaryRight,
+	nullptr,
+	// Row 3: 7, 8, 9, C
+	&internalButtonStates.R,
+	&internalButtonStates.Y,
+	&internalButtonStates.X,
+	nullptr,
+	// Row 4: *, 0, #, Redial
+	&internalButtonStates.ZL,
+	&internalButtonStates.B,
+	&internalButtonStates.A,
+	&internalButtonStates.Plus,
+};
 #endif
 
 // Nintendo Switch gamepad output
@@ -270,6 +326,10 @@ void setup() {
 #elif defined(PENCON64) || defined(VRCON)
 	penCon64Input.begin(useInvertedSoftwareSerial, baudRate, rxPin, txPin);
 	penCon64Input.mapJoystickButtons(joystickButtonMap, sizeof(joystickButtonMap) / sizeof(*joystickButtonMap));
+#elif defined TELECON
+	// Initialize phone keypad input
+	keypadInput.begin(rowPins, colPins);
+	keypadInput.mapKeypadToBools(keypadMapDpad, sizeof(keypadMapDpad) / sizeof(*keypadMapDpad));
 #endif
 
 	// Initialize Nintendo Switch gamepad output
@@ -303,6 +363,20 @@ void loop() {
 #elif defined(PENCON64) || defined(VRCON)
 	// Handle LightPen + joystick over RS232 input
 	const uint8_t pressedKnownKeyCount = penCon64Input.updateInputs();
+#elif defined TELECON
+	// Handle pulse/tone switch
+	switch (digitalRead(pulseToneSwitchPin))
+	{
+		case pulseToneValuePulseSmash:
+			keypadInput.mapKeypadToBools(keypadMapSmash, sizeof(keypadMapSmash) / sizeof(*keypadMapSmash));
+			break;
+		case pulseToneValueToneDpad:
+			keypadInput.mapKeypadToBools(keypadMapDpad, sizeof(keypadMapDpad) / sizeof(*keypadMapDpad));
+			break;
+	}
+
+	// Handle phone keypad input
+	const uint8_t pressedKnownKeyCount = keypadInput.updateInputs();
 #endif
 	internalButtonStates.updateLatches();
 
@@ -321,5 +395,7 @@ void loop() {
 #elif defined(PENCON64) || defined(VRCON)
 	ledController->setVoltageLeds(pressedKnownKeyCount % 4);
 	ledController->setTxLed(pressedKnownKeyCount % 4);
+#elif defined TELECON
+	ledController->setVoltageLeds(pressedKnownKeyCount % 4);
 #endif
 }
