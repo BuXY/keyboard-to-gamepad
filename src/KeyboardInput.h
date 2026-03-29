@@ -18,6 +18,7 @@ public:
 	void mapKeyCodesToBools(KeyMapItem i_keyMap[], const size_t i_count);
 	void mapKeyCodeToBool(const size_t i_keyCode, bool* i_targetBool);
 	size_t addModifier(const size_t i_keyCode) const;
+	void clearKeymap();
 
 	// return: Pressed key count
 	uint8_t updateInputs();

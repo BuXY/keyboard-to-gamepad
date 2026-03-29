@@ -70,8 +70,16 @@ LedController* ledController = nullptr;
 InternalButtonStates internalButtonStates;
 
 #if defined PS2_KEYBOARD
-KeyboardInput::KeyMapItem keyMap[] = 
+bool f3_selectDefaultBuxyKeyMap = false;
+bool f4_selectHurimKeyMap = false;
+bool f5_selectPocketZKeyMap = false;
+
+KeyboardInput::KeyMapItem defaultBuxyKeyMap[] = 
 {
+	{PS2_KC_F3, &f3_selectDefaultBuxyKeyMap},
+	{PS2_KC_F4, &f4_selectHurimKeyMap},
+	{PS2_KC_F5, &f5_selectPocketZKeyMap},
+
 	{keyboardInput.addModifier(PS2_KC_L_ARROW), &internalButtonStates.PrimaryLeft},
 	{keyboardInput.addModifier(PS2_KC_R_ARROW), &internalButtonStates.PrimaryRight},
 	{keyboardInput.addModifier(PS2_KC_UP_ARROW), &internalButtonStates.PrimaryUp},
@@ -108,6 +116,124 @@ KeyboardInput::KeyMapItem keyMap[] =
 	{PS2_KC_F1, &internalButtonStates.SetRunOn},
 	{PS2_KC_F2, &internalButtonStates.SetRunOff},
 };
+
+KeyboardInput::KeyMapItem hurimKeyMap[] = 
+{
+	{PS2_KC_F1, &internalButtonStates.SetRunOn},
+	{PS2_KC_F2, &internalButtonStates.SetRunOff},
+	{PS2_KC_F3, &f3_selectDefaultBuxyKeyMap},
+	{PS2_KC_F4, &f4_selectHurimKeyMap},
+	{PS2_KC_F5, &f5_selectPocketZKeyMap},
+
+	// wasd for moving
+	{PS2_KC_A, &internalButtonStates.PrimaryLeft},
+	{PS2_KC_D, &internalButtonStates.PrimaryRight},
+	{PS2_KC_W, &internalButtonStates.PrimaryUp},
+	{PS2_KC_S, &internalButtonStates.PrimaryDown},
+
+	// e is jump
+	{PS2_KC_E, &internalButtonStates.X},
+	// q is shield
+	{PS2_KC_Q, &internalButtonStates.ZL},
+	// u is grab
+	{PS2_KC_U, &internalButtonStates.L},
+	// i is another shield
+	{PS2_KC_I, &internalButtonStates.ZR},
+
+	// o is B button
+	// p is A button
+	{PS2_KC_P, &internalButtonStates.A},
+	{PS2_KC_O, &internalButtonStates.B},
+
+	// j is c stick left
+	// k is c stick down
+	// l is c stick up
+	// é is c stick right
+	{PS2_KC_J, &internalButtonStates.SecondaryLeft},
+	{PS2_KC_SEMI, &internalButtonStates.SecondaryRight},
+	{PS2_KC_L, &internalButtonStates.SecondaryUp},
+	{PS2_KC_K, &internalButtonStates.SecondaryDown},
+
+	// 1 above q is d pad left
+	// 2 is d pad up
+	// 3 is d pad down
+	// 4 is d pad right
+	{PS2_KC_1, &internalButtonStates.DPadLeft},
+	{PS2_KC_4, &internalButtonStates.DPadRight},
+	{PS2_KC_2, &internalButtonStates.DPadUp},
+	{PS2_KC_3, &internalButtonStates.DPadDown},
+
+	// extra buttons i like to have is R and space, and ig shift as that comes in reach
+	{PS2_KC_R, &internalButtonStates.R},
+	{PS2_KC_SPACE, &internalButtonStates.Y},
+
+	// backspace -
+	// enter +
+	{PS2_KC_BS, &internalButtonStates.Minus},
+	{PS2_KC_ENTER, &internalButtonStates.Plus},
+	// right shift home
+	{PS2_KC_R_SHIFT, &internalButtonStates.Home},
+	// print screen screen shot
+	{keyboardInput.addModifier(PS2_KC_PRTSCR), &internalButtonStates.Capture},
+};
+
+KeyboardInput::KeyMapItem pocketZKeyMap[] = 
+{
+	{PS2_KC_F1, &internalButtonStates.SetRunOn},
+	{PS2_KC_F2, &internalButtonStates.SetRunOff},
+	{PS2_KC_F3, &f3_selectDefaultBuxyKeyMap},
+	{PS2_KC_F4, &f4_selectHurimKeyMap},
+	{PS2_KC_F5, &f5_selectPocketZKeyMap},
+
+	// mozogni a wasd vel szeretnék
+	{PS2_KC_A, &internalButtonStates.PrimaryLeft},
+	{PS2_KC_D, &internalButtonStates.PrimaryRight},
+	{PS2_KC_W, &internalButtonStates.PrimaryUp},
+	{PS2_KC_S, &internalButtonStates.PrimaryDown},
+
+	// ütés J
+	// special K
+	{PS2_KC_J, &internalButtonStates.A},
+	{PS2_KC_K, &internalButtonStates.B},
+
+	// shield L
+	// grab U
+	{PS2_KC_L, &internalButtonStates.ZL},
+	{PS2_KC_U, &internalButtonStates.L},
+
+	// ugrani space
+	{PS2_KC_SPACE, &internalButtonStates.X},
+
+	// 4 irányt nevezz meg a secondary stickre
+	// akkor a fel legyen a H
+	// le N
+	// Bal Q
+	// jobb E
+	{PS2_KC_Q, &internalButtonStates.SecondaryLeft},
+	{PS2_KC_E, &internalButtonStates.SecondaryRight},
+	{PS2_KC_H, &internalButtonStates.SecondaryUp},
+	{PS2_KC_N, &internalButtonStates.SecondaryDown},
+
+	// itt nincs olyan hogy walk button igaz?
+	// Legyen az i
+	{PS2_KC_I, &internalButtonStates.Run},
+
+	// akkor a 4 taunt meg legyen a iop9
+	// toljuk eggyel arrébb a d padot
+	// öopő
+	{PS2_KC_O, &internalButtonStates.DPadLeft},
+	{PS2_KC_OPEN_SQ, &internalButtonStates.DPadRight},
+	{PS2_KC_0, &internalButtonStates.DPadUp},
+	{PS2_KC_P, &internalButtonStates.DPadDown},
+
+	// plusz enter
+	// home esc
+	// a minus lehet a backspace
+	{PS2_KC_ENTER, &internalButtonStates.Plus},
+	{PS2_KC_BS, &internalButtonStates.Minus},
+	{PS2_KC_ESC, &internalButtonStates.Home},
+};
+
 #elif defined MIDI_KEYBOARD
 MidiInput::NoteMapItem noteMap[] = 
 {
@@ -318,7 +444,7 @@ void setup() {
 #if defined PS2_KEYBOARD
 	// Initialize PS/2 keyboard input
 	keyboardInput.begin(dataPin_usbDataMinus, irqpin_usbDataPlus);
-	keyboardInput.mapKeyCodesToBools(keyMap, sizeof(keyMap) / sizeof(*keyMap));
+	keyboardInput.mapKeyCodesToBools(defaultBuxyKeyMap, sizeof(defaultBuxyKeyMap) / sizeof(*defaultBuxyKeyMap));
 #elif defined MIDI_KEYBOARD
 	// Initialize MIDI input
 	midiInput.begin();
@@ -357,6 +483,27 @@ void loop() {
 #if defined PS2_KEYBOARD
 	// Handle PS/2 keyboard input
 	const uint8_t pressedKnownKeyCount = keyboardInput.updateInputs();
+	KeyboardInput::KeyMapItem* newKeyMap = nullptr;
+	if (f3_selectDefaultBuxyKeyMap)
+	{
+		newKeyMap = defaultBuxyKeyMap;
+	}
+	else if (f4_selectHurimKeyMap)
+	{
+		newKeyMap = hurimKeyMap;
+	}
+	else if (f5_selectPocketZKeyMap)
+	{
+		newKeyMap = pocketZKeyMap;
+	}
+	if (newKeyMap)
+	{
+		f3_selectDefaultBuxyKeyMap = false;
+		f4_selectHurimKeyMap = false;
+		f5_selectPocketZKeyMap = false;
+		keyboardInput.clearKeymap();
+		keyboardInput.mapKeyCodesToBools(newKeyMap, sizeof(newKeyMap) / sizeof(*newKeyMap));
+	}
 #elif defined MIDI_KEYBOARD
 	// Handle MIDI keyboard input
 	const uint8_t pressedKnownKeyCount = midiInput.updateInputs();
