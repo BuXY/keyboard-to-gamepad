@@ -202,22 +202,22 @@ bool* keypadMapDpad[] = {
 };
 bool* keypadMapSmash[] = {
 	// Row 1: 1, 2, 3, Flash
-	nullptr,
+	&internalButtonStates.SetRunOn,
 	&internalButtonStates.PrimaryUp,
-	nullptr,
-	&internalButtonStates.Minus,
+	&internalButtonStates.SetRunOff,
+	&internalButtonStates.Run,
 	// Row 2: 4, 5, 6, B
 	&internalButtonStates.PrimaryLeft,
 	&internalButtonStates.PrimaryDown,
 	&internalButtonStates.PrimaryRight,
 	nullptr,
 	// Row 3: 7, 8, 9, C
-	&internalButtonStates.ZL,
+	&internalButtonStates.R,
 	&internalButtonStates.Y,
 	&internalButtonStates.X,
 	nullptr,
 	// Row 4: *, 0, #, Redial
-	&internalButtonStates.L,
+	&internalButtonStates.ZL,
 	&internalButtonStates.B,
 	&internalButtonStates.A,
 	&internalButtonStates.Plus,
@@ -395,5 +395,7 @@ void loop() {
 #elif defined(PENCON64) || defined(VRCON)
 	ledController->setVoltageLeds(pressedKnownKeyCount % 4);
 	ledController->setTxLed(pressedKnownKeyCount % 4);
+#elif defined TELECON
+	ledController->setVoltageLeds(pressedKnownKeyCount % 4);
 #endif
 }
