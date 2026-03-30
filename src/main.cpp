@@ -1,9 +1,9 @@
-// #define PS2_KEYBOARD
+#define PS2_KEYBOARD
 // #define MIDI_KEYBOARD
 #define BASE_OCTAVE 5
 // #define PENCON64
 // #define VRCON
-#define TELECON
+// #define TELECON
 // #define PD_MICRO
 
 #include "SwitchGamepad.h"
@@ -112,6 +112,7 @@ KeyboardInput::KeyMapItem defaultBuxyKeyMap[] =
 	{PS2_KC_ESC, &internalButtonStates.Home},
 	{keyboardInput.addModifier(PS2_KC_PRTSCR), &internalButtonStates.Capture},
 	
+	{PS2_KC_CTRL, &internalButtonStates.Run},
 	{keyboardInput.addModifier(PS2_KC_CTRL), &internalButtonStates.Run},
 	{PS2_KC_F1, &internalButtonStates.SetRunOn},
 	{PS2_KC_F2, &internalButtonStates.SetRunOff},
@@ -482,27 +483,35 @@ void loop() {
 
 #if defined PS2_KEYBOARD
 	// Handle PS/2 keyboard input
+	const bool possibleKeymapChange =
+		  !f3_selectDefaultBuxyKeyMap
+		& !f4_selectHurimKeyMap
+		& !f5_selectPocketZKeyMap;
 	const uint8_t pressedKnownKeyCount = keyboardInput.updateInputs();
 	KeyboardInput::KeyMapItem* newKeyMap = nullptr;
-	if (f3_selectDefaultBuxyKeyMap)
+	uint8_t newSize = 0;
+	if (possibleKeymapChange)
 	{
-		newKeyMap = defaultBuxyKeyMap;
-	}
-	else if (f4_selectHurimKeyMap)
-	{
-		newKeyMap = hurimKeyMap;
-	}
-	else if (f5_selectPocketZKeyMap)
-	{
-		newKeyMap = pocketZKeyMap;
-	}
-	if (newKeyMap)
-	{
-		f3_selectDefaultBuxyKeyMap = false;
-		f4_selectHurimKeyMap = false;
-		f5_selectPocketZKeyMap = false;
-		keyboardInput.clearKeymap();
-		keyboardInput.mapKeyCodesToBools(newKeyMap, sizeof(newKeyMap) / sizeof(*newKeyMap));
+		if (f3_selectDefaultBuxyKeyMap)
+		{
+			newKeyMap = defaultBuxyKeyMap;
+			newSize = sizeof(defaultBuxyKeyMap) / sizeof(*defaultBuxyKeyMap);
+		}
+		else if (f4_selectHurimKeyMap)
+		{
+			newKeyMap = hurimKeyMap;
+			newSize = sizeof(hurimKeyMap) / sizeof(*hurimKeyMap);
+		}
+		else if (f5_selectPocketZKeyMap)
+		{
+			newKeyMap = pocketZKeyMap;
+			newSize = sizeof(pocketZKeyMap) / sizeof(*pocketZKeyMap);
+		}
+		if (newKeyMap)
+		{
+			keyboardInput.clearKeymap();
+			keyboardInput.mapKeyCodesToBools(newKeyMap, newSize);
+		}
 	}
 #elif defined MIDI_KEYBOARD
 	// Handle MIDI keyboard input
