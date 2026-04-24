@@ -1,10 +1,11 @@
-#define PS2_KEYBOARD
+// #define PS2_KEYBOARD
 // #define MIDI_KEYBOARD
 #define BASE_OCTAVE 5
 // #define PENCON64
 // #define VRCON
 // #define TELECON
 // #define PD_MICRO
+#define TEKKEN6
 
 #include "SwitchGamepad.h"
 #if defined PS2_KEYBOARD
@@ -16,6 +17,8 @@
 #include "PenCon64Input.h"
 #elif defined TELECON 
 #include "KeypadInput.h"
+#elif defined TEKKEN6
+#include "GpioInput.h"
 #endif
 #ifdef PD_MICRO
 #include "LedPdMicro.h"
@@ -46,6 +49,8 @@ byte colPins[4] = { 7, 6, 2, 9 };
 const uint8_t pulseToneSwitchPin = A3;
 const int pulseToneValuePulseSmash = HIGH;
 const int pulseToneValueToneDpad = LOW;
+#elif defined TEKKEN6
+uint8_t allDigitalInputs[15] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 14, 15, 18, 19, 20, 21};
 #endif
 const uint32_t refreshRateMillis = 10;
 const uint32_t liveLedFlashIntervalMillis = 1000;
@@ -61,6 +66,8 @@ MidiInput midiInput;
 PenCon64Input penCon64Input;
 #elif defined TELECON
 KeypadInput keypadInput;
+#elif defined TEKKEN6
+GpioInput gpioInput;
 #endif
 SwitchGamepad gamepadOutput;
 LedController* ledController = nullptr;
@@ -349,6 +356,41 @@ bool* keypadMapSmash[] = {
 	&internalButtonStates.A,
 	&internalButtonStates.Plus,
 };
+#elif defined TEKKEN6
+bool* defaultGpioMap[] = {
+	&internalButtonStates.ZL,			// circle
+	&internalButtonStates.B,			// cross
+	&internalButtonStates.L,			// square
+	&internalButtonStates.PrimaryUp,	// up
+	&internalButtonStates.PrimaryRight,	// right
+	&internalButtonStates.PrimaryDown,	// down
+	&internalButtonStates.PrimaryLeft,	// left
+	&internalButtonStates.Home,			// PS
+	&internalButtonStates.Y,			// triangle
+	&internalButtonStates.Minus,		// select
+	&internalButtonStates.Plus,			// start
+	&internalButtonStates.ZR,			// L2
+	&internalButtonStates.R,			// L1
+	&internalButtonStates.A,			// R2
+	&internalButtonStates.X,			// R1
+};
+bool* upsideDownGpioMap[] = {
+	&internalButtonStates.R,			// circle
+	&internalButtonStates.X,			// cross
+	&internalButtonStates.ZR,			// square
+	&internalButtonStates.PrimaryDown,	// up
+	&internalButtonStates.PrimaryLeft,	// right
+	&internalButtonStates.PrimaryUp,	// down
+	&internalButtonStates.PrimaryRight,	// left
+	&internalButtonStates.Home,			// PS
+	&internalButtonStates.A,			// triangle
+	&internalButtonStates.Run,			// select
+	&internalButtonStates.Plus,			// start
+	&internalButtonStates.L,			// L2
+	&internalButtonStates.ZL,			// L1
+	&internalButtonStates.Y,			// R2
+	&internalButtonStates.B,			// R1
+};
 #endif
 
 // Nintendo Switch gamepad output
@@ -457,6 +499,18 @@ void setup() {
 	// Initialize phone keypad input
 	keypadInput.begin(rowPins, colPins);
 	keypadInput.mapKeypadToBools(keypadMapDpad, sizeof(keypadMapDpad) / sizeof(*keypadMapDpad));
+#elif defined TEKKEN6
+	// Initialize Hori Tekken 6 Wireless Fighting Stick
+
+	// Determine button mapping on startup
+	pinMode(3, INPUT_PULLUP);
+	pinMode(4, INPUT_PULLUP);
+	const bool stickIsUpOrDown = (digitalRead(3) == 0) || (digitalRead(4) == 0);
+
+	gpioInput.begin(allDigitalInputs, sizeof(allDigitalInputs) / sizeof (*allDigitalInputs));
+	gpioInput.mapDigitalInputsToBools(
+		stickIsUpOrDown ? upsideDownGpioMap : defaultGpioMap,
+		sizeof(defaultGpioMap) / sizeof(*defaultGpioMap));
 #endif
 
 	// Initialize Nintendo Switch gamepad output
@@ -533,6 +587,9 @@ void loop() {
 
 	// Handle phone keypad input
 	const uint8_t pressedKnownKeyCount = keypadInput.updateInputs();
+#elif defined TEKKEN6
+	// Handle Tekken 6 GPIO inputs
+	const uint8_t pressedKnownKeyCount = gpioInput.updateInputs();
 #endif
 	internalButtonStates.updateLatches();
 
@@ -553,5 +610,7 @@ void loop() {
 	ledController->setTxLed(pressedKnownKeyCount % 4);
 #elif defined TELECON
 	ledController->setVoltageLeds(pressedKnownKeyCount % 4);
+#elif defined TEKKEN6
+	ledController->setVoltageLeds(pressedKnownKeyCount % 2);
 #endif
 }

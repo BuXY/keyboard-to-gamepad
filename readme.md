@@ -108,6 +108,61 @@ Pulse           | 5V             | Super Smash Bros  |
 
 The phone hook switch could be used for interrupting the USB 5V power. Alternatively, it could be wired to A2 input pin. There is no function assigned to it currently.
 
+### Hori Tekken 6 Wireless Fighting Stick
+
+The fighting stick features a 4-way digital joystick and 11 buttons.
+
+The wireless system will be converted to a USB wired controller, because for my unit, the receiver module for the PS was lost.
+The original system contains a plug-in Wireless module. This module is removed, and the connector's pins are routed to the Arduino's GPIO pins.
+
+The default pinout of the Arduino designates a lot of pins for useful peripheral connection.
+But in this scenario, we need more regular GPIOs. This is not a problem for the software stack, all these pins have a Digital Input index.
+
+The common rail for all buttons is +3V on the original controller, which implies a pull-down on the GPIOs of the original Wireless Module.
+However, the Arduino can only be set to pull-up, that's why the Common rail is connected to the GND.
+
+Important: The battery compartment must be disconnected by detaching the plug from CN2 socket, otherwise the Arduino might get damaged!
+
+There is no official button map for this controller. Some info can be found about [Smash-oriented arcade-style controllers](https://www.ssbwiki.com/Arcade_controller)
+If an official layout will be found, the default button map will be revised.
+
+The device decides the keymap from the state of the stick when the USB cable is connected.
+- The default layout is a left-handed stick and all texts are readable.
+- But if the stick is held up or down, then an alternative mapping is activated where the right-hand controls the stick and buttons are played by the left hand. The controller should be facing towards the display, and the USB cable towards the player.
+
+Fighting Stick graphical layout:
+
+<!-- --> | <!-- --> | <!-- --> | <!-- --> |
+-------- | -------- | -------- | -------- |
+Square   | Triangle | R1       | L1       |
+Cross    | Circle   | R2       | L2       |
+
+Upside-down right-handed stick
+
+<!-- --> | <!-- --> | <!-- --> | <!-- --> |
+-------- | -------- | -------- | -------- |
+L2       | R2       | Circle   | Cross    |
+L1       | R1       | Triangle | Square   |
+
+Arduino pin | CN1 connector on PCB | PCB silkscreen | Fighting Stick control | Nintendo Switch made-up control | Upside-down right-handed stick | 
+----------- | -------------------- | -------------- | ---------------------- | ------------------------------- | ------------------------------ | 
+GND (pin 2) | 2                    | Common / +3V   | N/A                    | N/A                             | N/A                            |
+D0 (RX1)    | 22                   | SW7            | Cross                  | ZL (Shield)                     | R (Grab)                       |
+D1 (TX0)    | 20                   | SW5            | Circle                 | B                               | X                              |
+D2          | 21                   | SW8            | Square                 | L (Grab)                        | ZR (Shield)                    |
+D3          | 24                   | CN7 2 red      | Stick up               | Primary stick up                | Primary stick down             |
+D4          | 23                   | CN7 6 blue     | Stick right            | Primary stick right             | Primary stick left             |
+D5          | 26                   | CN7 8 yellow   | Stick down             | Primary stick down              | Primary stick up               |
+D6          | 25                   | CN7 4 white    | Stick left             | Primary stick left              | Primary stick right            |
+D7          | 28                   | CN6 2          | PS                     | Home                            | Home                           |
+D8          | 30                   | SW6            | Triangle               | Y                               | A                              |
+D14 (MISO)  | 7                    | CN5 2 SW12     | Select                 | Minus                           | Run (tilt)                     |
+D15 (SCK)   | 8                    | CN5 3 SW13     | Start                  | Plus                            | Plus                           |
+D18 (A0)    | 5                    | SW1            | L2                     | ZR (Shield)                     | L (Grab)                       |
+D19 (A1)    | 6                    | SW2            | L1                     | R (Grab)                        | ZL (Shield)                    |
+D20 (A2)    | 3                    | SW3            | R2                     | A                               | Y                              |
+D21 (A3)    | 4                    | SW4            | R1                     | X                               | B                              |
+
 ## Arduino library configuration
 
 - Append the contents of `InstallArtifacts\boards.txt` to the `%LocalAppData%\Arduino*\packages\arduino\hardware\avr\*\boards.txt` file
