@@ -39,6 +39,14 @@ size_t KeyboardInput::addModifier(const size_t i_keyCode) const
 	return i_keyCode + modifierShiftAmount;
 }
 
+void KeyboardInput::clearKeymap()
+{
+	for (size_t keyCode = 0; keyCode < keyMapSize; ++keyCode)
+	{
+		mapKeyCodeToBool(keyCode, nullptr);
+	}
+}
+
 uint8_t KeyboardInput::updateInputs()
 {
 	uint8_t scanCode = 0;

@@ -1,5 +1,13 @@
 #pragma once
 
+#include <avr/common.h>
+// This is a terrible workaround for an ODR problem.
+// There is absoutely no need for this include for this class.
+// The macro ZL is defined in the "Pointer registers definitions" section
+// and would make this class definition different when included from InternalButtonStates.cpp or main.cpp.
+// Now the ZL property is actually called r30, which does not cause any problems,
+// but the rest of the code can use the ZL name.
+
 class InternalButtonStates
 {
 public:
